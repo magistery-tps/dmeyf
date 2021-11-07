@@ -5,7 +5,7 @@
 
 [dmeyf2021segunda](https://www.kaggle.com/c/dmeyf2021segunda/leaderboard)
 
-## Actualizar fork
+## Actualizar Fork
 
 1. Registrar repo orignal como **upstream**:
 
