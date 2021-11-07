@@ -7,7 +7,7 @@
 
 ## Actualizar fork
 
-1. Argegar repo  orignal como **upstream**:
+1. Registrar repo orignal como **upstream**:
 
 ```bash
 $ git remote add upstream https://github.com/dmecoyfin/dmeyf.git
