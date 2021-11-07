@@ -13,10 +13,10 @@
 $ git remote add upstream https://github.com/dmecoyfin/dmeyf.git
 
 $ git remote -v
-origin	https://github.com/magistery-tps/dmeyf.git (fetch) <-- Nuestro fork
-origin	https://github.com/magistery-tps/dmeyf.git (push)  <-- Nuestro fork
-upstream	https://github.com/dmecoyfin/dmeyf.git (fetch)   <-- Repo original
-upstream	https://github.com/dmecoyfin/dmeyf.git (push)    <-- Repo original
+origin    https://github.com/magistery-tps/dmeyf.git (fetch)  <-- Nuestro fork
+origin	  https://github.com/magistery-tps/dmeyf.git (push)   <-- Nuestro fork
+upstream	https://github.com/dmecoyfin/dmeyf.git (fetch)      <-- Repo original
+upstream	https://github.com/dmecoyfin/dmeyf.git (push)       <-- Repo original
 ```
 
 2. Traerse todos los branches del repo upstream:
