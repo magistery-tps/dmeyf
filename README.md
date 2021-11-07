@@ -19,7 +19,7 @@ upstream  https://github.com/dmecoyfin/dmeyf.git (fetch)      <-- Repo original
 upstreaM  https://github.com/dmecoyfin/dmeyf.git (push)       <-- Repo original
 ```
 
-2. Traerse todos los branches del repo upstream:
+2. Traerse todos los branches(actualizados) del repo upstream:
 
 ```bash
 $ git fetch upstream
