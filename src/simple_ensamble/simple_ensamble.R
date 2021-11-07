@@ -6,6 +6,10 @@ gc()             #garbage collection
 library(pacman)
 p_load(this.path, purrr, tidyverse)
 
+RESULTS_PATH  <- '../../kaggle'
+IDENTIFIER    <- 'numero_de_cliente'
+ENSAMPLE_PATH <- './ensample.csv'
+
 load_unified_result <- function(results_path, unique_column, pattern = '*.csv') {
   list.files(path = results_path, pattern = pattern) %>%
     map(\(filename) paste(results_path, '/', filename, sep='')) %>%
@@ -14,10 +18,7 @@ load_unified_result <- function(results_path, unique_column, pattern = '*.csv') 
 }
 
 setwd(this.path::this.dir())
-result <- load_unified_result(
-  results_path          = '../../kaggle', 
-  unique_column = 'numero_de_cliente'
-)
+result <- load_unified_result(RESULTS_PATH, IDENTIFIER)
 
 ensamble_result <- result %>% 
   mutate(positives = ifelse(Predicted == 1, 1, 0), negatives = ifelse(Predicted == 0, 1, 0)) %>% 
@@ -28,5 +29,5 @@ ensamble_result <- result %>%
 
 ensamble_result %>% group_by(Predicted) %>% count()
 
-write.csv(ensamble_result, './ensample.csv', row.names = FALSE, quote=FALSE)
+write.csv(ensamble_result, ENSAMPLE_PATH, row.names = FALSE, quote=FALSE)
 
