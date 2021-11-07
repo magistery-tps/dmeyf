@@ -19,19 +19,19 @@ upstream	https://github.com/dmecoyfin/dmeyf.git (fetch)   <-- Repo original
 upstream	https://github.com/dmecoyfin/dmeyf.git (push)    <-- Repo original
 ```
 
-2. Traerse todo los branches del repo upstream:
+2. Traerse todos los branches del repo upstream:
 
 ```bash
 $ git fetch upstream
 ```
 
-3. Cambiar al branch master
+3. Cambiar al branch master:
 
 ```bash
 $ git checkout master
 ```
 
-4. Reescribir el branch master del fork con os comin del repo original y los comun que que se encuentren en el fork pero no en el repo original.
+4. Reescribir el branch master del fork con los commits del repo original y los commits que se encuentren en el fork pero no en el repo original.
 
 ```bash
 $ git rebase upstream/master
