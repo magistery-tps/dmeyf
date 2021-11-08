@@ -6,9 +6,11 @@ gc()             #garbage collection
 library(pacman)
 p_load(this.path, purrr, tidyverse)
 
-RESULTS_PATH  <- '../../kaggle'
+str_datetime <- function()  format(Sys.time(), "%Y-%m-%d_%H-%M-%OS3")
+
+RESULTS_PATH  <- '../mesetas'
 IDENTIFIER    <- 'numero_de_cliente'
-ENSAMPLE_PATH <- './ensample.csv'
+ENSAMPLE_PATH <- paste('../ensamples/', str_datetime(), '_ensample.csv' , sep='')
 
 load_unified_result <- function(results_path, unique_column, pattern = '*.csv') {
   list.files(path = results_path, pattern = pattern) %>%
