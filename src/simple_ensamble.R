@@ -53,9 +53,9 @@ weighted_voting_startegy <- function(result, config, default_weight=0.1) {
 INPUT_PATH       <- '../mesetas/'
 ENSAMPLE_PATH    <- '../ensamples/'
 OUTPUT_FILE_PATH <- paste(ENSAMPLE_PATH, str_datetime(), '_ensample.csv' , sep='')
-CONFIG_FILE_PATH <- paste(ENSAMPLE_PATH, 'config.csv', sep='')
+CONFIG_FILE_PATH <- paste(ENSAMPLE_PATH, 'config_overfitted_2.csv', sep='')
 config           <- read.csv(CONFIG_FILE_PATH)
-DEFAULT_WEIGHT   <- 0.1
+DEFAULT_WEIGHT   <- 0
 # ------------------------------------------------------------------------------------------------------------
 #
 #
