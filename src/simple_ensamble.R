@@ -25,7 +25,8 @@ load_unified_result <- function(results_path, pattern = '*.csv') {
     reduce(\(a, b)  a %>% union_all(b))
 }
 
-weighted_voting_startegy <- function(result, config, default_weight=0.1) {
+weighted_voting_startegy <- function(result, config, default_weight=0) {
+  config <- read.csv(CONFIG_FILE_PATH)
   result %>% 
     mutate(
       positives = ifelse(Predicted == 1, 1, 0), 
@@ -50,16 +51,15 @@ weighted_voting_startegy <- function(result, config, default_weight=0.1) {
 # ------------------------------------------------------------------------------------------------------------
 # Global variables
 # ------------------------------------------------------------------------------------------------------------
-CONFIG_TYPE      <- 'overfitted'
-CONFIG_TYPE      <- 'adjusted'
-CONFIG_TYPE      <- 'unweighted'
+CONFIG_TYPE      <- 'default'
+# CONFIG_TYPE      <- 'overfitted'
+# CONFIG_TYPE      <- 'adjusted'
+# CONFIG_TYPE      <- 'unweighted'
 
 INPUT_PATH       <- '../mesetas/'
 ENSAMPLE_PATH    <- '../ensamples/'
 OUTPUT_FILE_PATH <- paste(ENSAMPLE_PATH, str_datetime(), '_ensample_', CONFIG_TYPE, '.csv' , sep='')
 CONFIG_FILE_PATH <- paste(ENSAMPLE_PATH, 'config_', CONFIG_TYPE, '.csv', sep='')
-config           <- read.csv(CONFIG_FILE_PATH)
-DEFAULT_WEIGHT   <- 0
 # ------------------------------------------------------------------------------------------------------------
 #
 #
