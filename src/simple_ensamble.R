@@ -11,11 +11,43 @@ p_load(this.path, purrr, tidyverse)
 #
 #
 # ------------------------------------------------------------------------------------------------------------
+# Global variables
+# ------------------------------------------------------------------------------------------------------------
+CONFIG_TYPES     <- c('default', 'overfitted', 'adjusted')
+INPUT_PATH       <- '../mesetas/'
+ENSAMPLE_PATH    <- '../ensamples/'
+# ------------------------------------------------------------------------------------------------------------
+#
+#
+#
+# ------------------------------------------------------------------------------------------------------------
 # Functiions
 # ------------------------------------------------------------------------------------------------------------
 str_datetime <- function()  format(Sys.time(), "%Y-%m-%d_%H-%M-%OS3")
 
 write_csv <- function(df, path) write.csv(df, path, row.names = FALSE, quote=FALSE)
+
+save_output <- function(output, config_type, apply_fn) {
+  groups <- output %>% group_by(Predicted) %>% count()
+  negatives <- groups[1, 2]
+  positives <- groups[2, 2]
+  
+  OUTPUT_FILE_PATH <- paste(
+    ENSAMPLE_PATH, 
+    str_datetime(), 
+    '_ensample_', 
+    config_type, 
+    '_',
+    toString(apply_fn), 
+    '_pos_',
+    positives,
+    '_neg_',
+    negatives,
+    '.csv', 
+    sep=''
+  )
+  write_csv(output, OUTPUT_FILE_PATH)
+}
 
 load_unified_result <- function(results_path, pattern = '*.csv') {
   setwd(this.path::this.dir())
@@ -25,8 +57,21 @@ load_unified_result <- function(results_path, pattern = '*.csv') {
     reduce(\(a, b)  a %>% union_all(b))
 }
 
-weighted_voting_startegy <- function(result, config, default_weight=0) {
-  config <- read.csv(CONFIG_FILE_PATH)
+
+load_config <- function(config_type) {
+  read.csv(paste(ENSAMPLE_PATH, 'config_', config_type, '.csv', sep=''))
+}
+
+
+sum_fn    <- function(values, weight) sum(values)
+mean_fn   <- function(values, weight) mean(values)
+median_fn <- function(values, weight) median(values)
+
+weighted_sum_fn     <- function(values, weight) sum(values * weight)
+weighted_mean_fn    <- function(values, weight) mean(values * weight)
+weighted_median_fn  <- function(values, weight)  median(values * weight)
+
+voting_startegy <- function(result, config, apply_fn = weighted_sum_fn, default_weight=0) {
   result %>% 
     mutate(
       positives = ifelse(Predicted == 1, 1, 0), 
@@ -36,8 +81,8 @@ weighted_voting_startegy <- function(result, config, default_weight=0) {
     mutate(weight = ifelse(is.na(weight), default_weight, weight)) %>% 
     group_by(numero_de_cliente) %>% 
     summarise(
-      positives = sum(positives * weight), 
-      negatives = sum(negatives * weight)
+      positives = apply_fn(positives, weight), 
+      negatives = apply_fn(negatives, weight)
     ) %>%
     mutate(
       Predicted = ifelse(positives >= negatives, 1, 0)
@@ -49,30 +94,17 @@ weighted_voting_startegy <- function(result, config, default_weight=0) {
 #
 #
 # ------------------------------------------------------------------------------------------------------------
-# Global variables
-# ------------------------------------------------------------------------------------------------------------
-CONFIG_TYPE      <- 'default'
-# CONFIG_TYPE      <- 'overfitted'
-# CONFIG_TYPE      <- 'adjusted'
-# CONFIG_TYPE      <- 'unweighted'
-
-INPUT_PATH       <- '../mesetas/'
-ENSAMPLE_PATH    <- '../ensamples/'
-OUTPUT_FILE_PATH <- paste(ENSAMPLE_PATH, str_datetime(), '_ensample_', CONFIG_TYPE, '.csv' , sep='')
-CONFIG_FILE_PATH <- paste(ENSAMPLE_PATH, 'config_', CONFIG_TYPE, '.csv', sep='')
-# ------------------------------------------------------------------------------------------------------------
-#
-#
-#
-# ------------------------------------------------------------------------------------------------------------
 # Main
 # ------------------------------------------------------------------------------------------------------------
-input   <- load_unified_result(INPUT_PATH)
-output  <- weighted_voting_startegy(input, config, DEFAULT_WEIGHT)
+input <- load_unified_result(INPUT_PATH)
 
-output %>% 
-  group_by(Predicted) %>% 
-  count()
+for(config_type in CONFIG_TYPES) {
+  config <- load_config(config_type)
 
-write_csv(output, OUTPUT_FILE_PATH)
-
+  save_output(voting_startegy(input, config, sum_fn), config_type, 'sum')
+  save_output(voting_startegy(input, config, mean_fn), config_type, 'mean')
+  save_output(voting_startegy(input, config, median_fn), config_type, 'median')
+  save_output(voting_startegy(input, config, weighted_sum_fn), config_type, 'weighted_sum')
+  save_output(voting_startegy(input, config, weighted_mean_fn), config_type, 'weighted_mean')
+  save_output(voting_startegy(input, config, weighted_median_fn), config_type, 'weighted_median')
+}
