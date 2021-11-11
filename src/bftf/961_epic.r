@@ -209,7 +209,7 @@ FullModelo  <- function( hparam )
                 on=c("numero_de_cliente","foto_mes"),  
                 paste0( "E", kexperimento,"_", GLOBAL_iteracion ) := i.prob  ]
 
- #Fin primera pasada modelitos
+  #Fin primera pasada modelitos
 
   prediccion  <- predict( modelo_final, data.matrix( dapply[  , campos_buenos, with=FALSE]) )
 
@@ -220,11 +220,24 @@ FullModelo  <- function( hparam )
 
   entrega  <- as.data.table( list( "numero_de_cliente"= dapply$numero_de_cliente, 
                                    "Predicted"= Predicted)  )
+  
 
   #genero el archivo para Kaggle
   fwrite( entrega, 
           file= paste0(kkaggle, sprintf("%03d", GLOBAL_iteracion), ".csv" ),
           sep= "," )
+  
+
+  #genero el archivo para Kaggle pero con probabilidades
+  df_probs  <- as.data.table(list(
+    "numero_de_cliente"= dapply$numero_de_cliente, 
+    "Predicted"= prediccion
+  ))
+  fwrite(
+    df_probs, 
+    file= paste0(kkaggle, sprintf("%03d", GLOBAL_iteracion), "_probs.csv" ),
+    sep= ","
+  )
 
   base  <- round( pos_corte / 500 ) * 500   - 3000
   evaluados  <- c( seq(from=base, to=pmax(base+6000,15000), by=500 ) , pos_corte )  
@@ -235,14 +248,29 @@ FullModelo  <- function( hparam )
     prob_corte  <-  predsort[ pos ]
     Predicted  <- as.integer( prediccion > prob_corte )
 
-    entrega  <- as.data.table( list( "numero_de_cliente"= dapply$numero_de_cliente, 
-                                     "Predicted"= Predicted)  )
+    entrega  <- as.data.table(list(
+      "numero_de_cliente"= dapply$numero_de_cliente, 
+      "Predicted"= Predicted
+    ))
 
     #genero el archivo para Kaggle
-    fwrite( entrega, 
-            file= paste0(kkagglemeseta, sprintf("%03d", GLOBAL_iteracion), 
-                         "_",  sprintf( "%05d", pos) ,".csv" ),
-            sep= "," )
+    fwrite(
+      entrega, 
+      file= paste0(kkagglemeseta, sprintf("%03d", GLOBAL_iteracion), "_",  sprintf( "%05d", pos) ,".csv" ),
+      sep= ","
+    )
+
+    df_probs_meseta <- as.data.table(list(
+      "numero_de_cliente"= dapply$numero_de_cliente, 
+      "Predicted"= prediccion
+    ))
+
+    #genero el archivo para Kaggle
+    fwrite(
+      df_probs_meseta, 
+      file= paste0(kkagglemeseta, sprintf("%03d", GLOBAL_iteracion), "_",  sprintf( "%05d", pos) ,"_probs.csv" ),
+      sep= ","
+    )
   }
 
   rm( entrega, Predicted )
