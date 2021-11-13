@@ -15,7 +15,9 @@ p_load(this.path, purrr, tidyverse)
 # ------------------------------------------------------------------------------------------------------------
 DATASET_PATH  <- '../../dataset/'
 INPUT_PATH   <- paste(DATASET_PATH, 'paquete_premium.csv', sep='')
+# Daaset content from 201801 to 202101,
 date_ranges  <- list(
+  list(from='202011', to='202101'),
   list(from='202011', to='202011'),
   list(from='202010', to='202010'),
   list(from='202009', to='202009')
@@ -37,8 +39,8 @@ search_by_date_range <- function(dataset, from, to) {
 }
 
 output_file_path <- function(path, date_range, groups) {
-  positives <- groups[[2]][2]
-  negatives <- groups[[2]][1]
+  positives <- groups %>% filter(Predicted == 1) %>% pull(n)
+  negatives <- groups %>% filter(Predicted == 0) %>% pull(n)
   paste(
     path, 
     'dataset_from_', 
