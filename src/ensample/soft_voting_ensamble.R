@@ -13,21 +13,19 @@ p_load(this.path, purrr, tidyverse,  mlr3measures)
 # ------------------------------------------------------------------------------------------------------------
 # Global variables
 # ------------------------------------------------------------------------------------------------------------
-PROBS_PATH      <- '../../probs/'
-DATASET_PATH    <- '../../dataset/'
-# TEST_SET_PATH  <- paste(DATASET_PATH, 'dataset_from_202009_to_202009_pos_1460_neg_233894.csv', sep='')
-# TEST_SET_PATH  <- paste(DATASET_PATH, 'dataset_from_202010_to_202010_pos_1485_neg_235921.csv', sep='')
-TEST_SET_PATH  <- paste(DATASET_PATH, 'dataset_from_202011_to_202011_pos_1650_neg_237336.csv', sep='')
+PROBS_PATH    <- '../../probs/'
+DATASET_PATH  <- '../../dataset/'
+TEST_SET_PATH <- paste(DATASET_PATH, 'dataset_from_202011_to_202011_pos_1650_neg_237336.csv', sep='')
 
-ENSAMPLE_PATH   <- '../../ensamples/soft_voting/'
-CUTEOFF_PROBS   <- seq(0, 0.5,  0.0001)
-F_BETA_SCORE    <- 2
+ENSAMPLE_PATH <- '../../ensamples/soft_voting/'
+CUTEOFF_PROBS <- seq(0.01671, 0.1,  0.00000001)
+F_BETA_SCORE  <- 2
 # ------------------------------------------------------------------------------------------------------------
 #
 #
 #
 # ------------------------------------------------------------------------------------------------------------
-# Functiions
+# Functions
 # ------------------------------------------------------------------------------------------------------------
 cls <- function() cat("\014")
 
@@ -35,7 +33,7 @@ str_datetime <- function()  format(Sys.time(), "%Y-%m-%d_%H-%M-%OS3")
 
 write_csv <- function(df, path) write.csv(df, path, row.names = FALSE, quote=FALSE)
 
-save_output <- function(output, cutoff_prob, score) {
+save_output <- function(output, cutoff_prob) {
   groups <- output %>% group_by(Predicted) %>% count()
   positives <- groups %>% filter(Predicted == 1) %>% pull(n)
   negatives <- groups %>% filter(Predicted == 0) %>% pull(n)
@@ -43,7 +41,7 @@ save_output <- function(output, cutoff_prob, score) {
   OUTPUT_FILE_PATH <- paste(
     ENSAMPLE_PATH, 
     str_datetime(),
-    '-ensample-soft_voting-f_', F_BETA_SCORE, '_score_', score,
+    '-ensample-soft_voting-cutoff_prob_', best_cutoff_prob,
     '-pos_', positives,
     '-neg_', negatives,
     '.csv', 
@@ -110,19 +108,23 @@ test_set <- read.csv(TEST_SET_PATH)
 test_set %>% group_by(Predicted) %>% tally()
 
 probs               <- load_unified_result(PROBS_PATH)
-probs_grouped_by_id <-  group_by_id(probs, median)
+probs_grouped_by_id <- group_by_id(probs, median)
 best_score          <- 0
-best_score_result   <- NULL
+best_cutoff_prob    <- 0
 
 filtered_probs_grouped_by_id <- probs_grouped_by_id %>%
   inner_join(test_set, by='numero_de_cliente', suffix = c('', ".y")) %>%
-  selecy(numero_de_cliente, Predicted)
+  select(numero_de_cliente, Predicted)
   
+nrow(probs_grouped_by_id)
 nrow(filtered_probs_grouped_by_id)
 
 test_subset <- test_set %>%
   inner_join(filtered_probs_grouped_by_id, by='numero_de_cliente', suffix = c('', ".y")) %>%
-  selecy(numero_de_cliente, Predicted)
+  select(numero_de_cliente, Predicted)
+
+nrow(test_set)
+nrow(test_subset)
 
 test_subset %>%
   group_by(Predicted) %>%
@@ -145,21 +147,17 @@ for(cutoff_prob in CUTEOFF_PROBS) {
     beta     = F_BETA_SCORE
   )
   if(is.na(score)) {
-    show_info(cutoff_prob, score, positives, negatives)
-    next
+    break
   }
-
   if(score > best_score) {
-    best_score <- score
-    best_score_result <- probs_classes
-    show_info(cutoff_prob, best_score, positives, negatives, 'BEST ==> ')
-  } else {
-    show_info(cutoff_prob, best_score, positives, negatives)
+    best_score       <- score
+    best_cutoff_prob <- cutoff_prob
+    show_info(cutoff_prob, score, positives, negatives, 'BEST ==> / ')
   }
 }
 
-save_output(best_score_result, cutoff_prob, best_score)
-
-
-
+if(best_score > 0) {
+  best_score_result <- soft_voting_startegy(probs_grouped_by_id, best_cutoff_prob)
+  save_output(best_score_result, best_cutoff_prob)
+}
 
