@@ -13,13 +13,32 @@ p_load(this.path, purrr, tidyverse,  mlr3measures)
 # ------------------------------------------------------------------------------------------------------------
 # Global variables
 # ------------------------------------------------------------------------------------------------------------
+# Path del cual se levantan todos los archivos de probabilidades.
 PROBS_PATH    <- '../../probs/'
+
+# Path de dataset.
 DATASET_PATH  <- '../../dataset/'
+
+# Conjunto de test contra el que comparamos para calcular F-beta-score.
 TEST_SET_PATH <- paste(DATASET_PATH, 'dataset_from_202011_to_202011_pos_1650_neg_237336.csv', sep='')
 
-ENSAMPLE_PATH <- '../../ensamples/soft_voting/'
-CUTEOFF_PROBS <- seq(0.01671, 0.1,  0.00000001)
-F_BETA_SCORE  <- 2
+# Donde guardamos el resutlado.
+ENSAMPLE_PATH  <- '../../ensamples/soft_voting/'
+
+# Secuencia de probabilidades de corte a probar.
+#CUTEOFF_PROBS <- seq(0.01671, 0.1,  0.00000001) # median
+CUTEOFF_PROBS  <- seq(0.0161, 1,  0.00000001)
+# CUTEOFF_PROBS  <- seq(0.01705, 1,  0.00000001) # mean
+
+# Beta utulizado en la métrica F-beta-score utilizada para encontrar el mejor punto de corte.
+F_BETA_SCORE   <- 2
+
+# Función a aplicar sobre las probabilidades por cliente.
+# Nota: En general con la mediana en el publico esta dando valores mas bajos.
+APPLY_FN       <- mean # median
+
+# Cuanta paciencia tiene el algoritmo hasta encontrar el próximo menor punto de corte.
+MAX_PATIENCE   <- 500
 # ------------------------------------------------------------------------------------------------------------
 #
 #
@@ -77,7 +96,7 @@ classes <- function(df) {
     pull() %>% factor()
 }
 
-show_info <-function(cutoff_prob, score, positives_count, negative_count, prefix = '') {
+show_info <-function(cutoff_prob, score, positives_count=0, negative_count=0, prefix = '') {
   print(paste(
     prefix,
     'Cutoff Prob: ', 
@@ -103,15 +122,16 @@ neg_count <- function(df) df %>% filter(Predicted == 0) %>% count()
 # ------------------------------------------------------------------------------------------------------------
 # Main
 # ------------------------------------------------------------------------------------------------------------
+# Load test set..
 setwd(this.path::this.dir())
 test_set <- read.csv(TEST_SET_PATH)
 test_set %>% group_by(Predicted) %>% tally()
 
-probs               <- load_unified_result(PROBS_PATH)
-
+# Load al probs files unified into one data frame (union all).
+probs <- load_unified_result(PROBS_PATH)
 
 # La medianda da mas ganancia en el publico. por lo menos con pocos datos.
-probs_grouped_by_id <- group_by_id(probs, median)
+probs_grouped_by_id <- group_by_id(probs, APPLY_FN)
 
 # probs_grouped_by_id <- group_by_id(probs, mean)
 
@@ -136,7 +156,13 @@ test_subset %>%
   group_by(Predicted) %>%
   tally()
 
+patiences_step <- 0
 for(cutoff_prob in CUTEOFF_PROBS) {
+  if(patiences_step > MAX_PATIENCE) {
+    print(paste('Score does not improve after ', patiences_step, ' steps!', sep=''))
+    break
+  }
+
   probs_classes <- soft_voting_startegy(filtered_probs_grouped_by_id, cutoff_prob)
   
   positives <- pos_count(probs_classes)
@@ -153,16 +179,28 @@ for(cutoff_prob in CUTEOFF_PROBS) {
     beta     = F_BETA_SCORE
   )
   if(is.na(score)) {
+    patiences_step <- patiences_step + 1
+    
+    if(patiences_step %% 50 == 0) {
+      print(paste('Patience step...', patiences_step, sep=''))      
+    }
     break
   }
   if(score > best_score) {
     best_score       <- score
     best_cutoff_prob <- cutoff_prob
-    show_info(cutoff_prob, score, positives, negatives, 'BEST ==> / ')
+    show_info(cutoff_prob, score, positives, negatives)
+    patiences_step <- 0 
+  } else {
+    patiences_step <- patiences_step + 1
+    if(patiences_step %% 50 == 0) {
+      print(paste('Patience step...', patiences_step, sep=''))      
+    }
   }
 }
 
 if(best_score > 0) {
+  show_info(best_cutoff_prob, best_score, prefix = 'BEST >==> ')
   best_score_result <- soft_voting_startegy(probs_grouped_by_id, best_cutoff_prob)
   save_output(best_score_result, best_cutoff_prob)
 }
