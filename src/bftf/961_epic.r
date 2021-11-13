@@ -259,18 +259,6 @@ FullModelo  <- function( hparam )
       file= paste0(kkagglemeseta, sprintf("%03d", GLOBAL_iteracion), "_",  sprintf( "%05d", pos) ,".csv" ),
       sep= ","
     )
-
-    df_probs_meseta <- as.data.table(list(
-      "numero_de_cliente"= dapply$numero_de_cliente, 
-      "Predicted"= prediccion
-    ))
-
-    #genero el archivo para Kaggle
-    fwrite(
-      df_probs_meseta, 
-      file= paste0(kkagglemeseta, sprintf("%03d", GLOBAL_iteracion), "_",  sprintf( "%05d", pos) ,"_probs.csv" ),
-      sep= ","
-    )
   }
 
   rm( entrega, Predicted )

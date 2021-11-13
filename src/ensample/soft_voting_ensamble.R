@@ -108,7 +108,13 @@ test_set <- read.csv(TEST_SET_PATH)
 test_set %>% group_by(Predicted) %>% tally()
 
 probs               <- load_unified_result(PROBS_PATH)
+
+
+# La medianda da mas ganancia en el publico. por lo menos con pocos datos.
 probs_grouped_by_id <- group_by_id(probs, median)
+
+# probs_grouped_by_id <- group_by_id(probs, mean)
+
 best_score          <- 0
 best_cutoff_prob    <- 0
 
