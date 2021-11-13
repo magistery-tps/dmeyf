@@ -201,8 +201,11 @@ for(cutoff_prob in CUTEOFF_PROBS) {
 
 # Si se encontró algún punto de corte guardamos el mejor el resultado.
 if(best_score > 0) {
-  show_info(best_cutoff_prob, best_score, prefix = 'BEST >==> ')
   best_score_result <- soft_voting_startegy(probs_grouped_by_id, best_cutoff_prob)
+  positives         <- pos_count(best_score_result)
+  negatives         <- neg_count(best_score_result)
+
+  show_info(best_cutoff_prob, best_score, positives, negatives, 'BEST >==> ')
   save_output(best_score_result, best_cutoff_prob)
 }
 
