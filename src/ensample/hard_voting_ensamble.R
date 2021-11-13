@@ -15,7 +15,7 @@ p_load(this.path, purrr, tidyverse)
 # ------------------------------------------------------------------------------------------------------------
 CONFIG_TYPES     <- c('unweighted') # default') #, 'overfitted', 'adjusted')
 INPUT_PATH       <- '../../mesetas/'
-ENSAMPLE_PATH    <- '../../ensamples/class_voting/'
+ENSAMPLE_PATH    <- '../../ensamples/hard_voting/'
 # ------------------------------------------------------------------------------------------------------------
 #
 #
@@ -71,7 +71,7 @@ weighted_sum_fn     <- function(values, weight) sum(values * weight)
 weighted_mean_fn    <- function(values, weight) mean(values * weight)
 weighted_median_fn  <- function(values, weight)  median(values * weight)
 
-class_voting_startegy <- function(result, config, apply_fn = weighted_sum_fn, default_weight=0) {
+hard_voting_startegy <- function(result, config, apply_fn = weighted_sum_fn, default_weight=0) {
   result %>% 
     mutate(
       positives = ifelse(Predicted == 1, 1, 0), 
@@ -100,6 +100,6 @@ input <- load_unified_result(INPUT_PATH)
 
 for(config_type in CONFIG_TYPES) {
   config <- load_config(config_type)
-  save_output(class_voting_startegy(input, config, weighted_sum_fn), config_type, 'weighted_sum')
-  save_output(class_voting_startegy(input, config, weighted_mean_fn), config_type, 'weighted_mean')
+  save_output(hard_voting_startegy(input, config, weighted_sum_fn), config_type, 'weighted_sum')
+  save_output(hard_voting_startegy(input, config, weighted_mean_fn), config_type, 'weighted_mean')
 }
