@@ -13,7 +13,7 @@ p_load(this.path, purrr, tidyverse)
 # ------------------------------------------------------------------------------------------------------------
 # Global variables
 # ------------------------------------------------------------------------------------------------------------
-CONFIG_TYPES     <- c('default', 'overfitted', 'adjusted')
+CONFIG_TYPES     <- c('default') #, 'overfitted', 'adjusted')
 INPUT_PATH       <- '../../mesetas/'
 ENSAMPLE_PATH    <- '../../ensamples/class_voting/'
 # ------------------------------------------------------------------------------------------------------------
@@ -100,11 +100,6 @@ input <- load_unified_result(INPUT_PATH)
 
 for(config_type in CONFIG_TYPES) {
   config <- load_config(config_type)
-
-  save_output(class_voting_startegy(input, config, sum_fn), config_type, 'sum')
-  save_output(class_voting_startegy(input, config, mean_fn), config_type, 'mean')
-  save_output(class_voting_startegy(input, config, median_fn), config_type, 'median')
   save_output(class_voting_startegy(input, config, weighted_sum_fn), config_type, 'weighted_sum')
   save_output(class_voting_startegy(input, config, weighted_mean_fn), config_type, 'weighted_mean')
-  save_output(class_voting_startegy(input, config, weighted_median_fn), config_type, 'weighted_median')
 }
