@@ -574,22 +574,22 @@ CanaritosImportancia( canaritos_ratio= 0.1 )
 #Agrego lags de orden 3
 cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
 if( palancas$lag3 )   Lags( cols_analiticas, 3, palancas$delta3 )
-CanaritosImportancia()      # vuelvo a hacer lugar gracias a los canaritos
+CanaritosImportancia( 0.3 )      # vuelvo a hacer lugar gracias a los canaritos
 
 #Agrego lags de orden 4
 cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
 if( palancas$lag4 )   Lags(  cols_analiticas, 4, palancas$delta4 )
-CanaritosImportancia()
+CanaritosImportancia( 0.3 )
 
 #Agrego lags de orden 5
 cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
 if( palancas$lag5 )   Lags( cols_analiticas, 5, palancas$delta5 )
-CanaritosImportancia()
+CanaritosImportancia( 0.3 )
 
 #Agrego lags de orden 6
 cols_analiticas  <- setdiff( colnames(dataset),  c("numero_de_cliente","foto_mes","mes","clase_ternaria") )
 if( palancas$lag6 )   Lags( cols_analiticas, 6, palancas$delta6 )
-CanaritosImportancia()
+CanaritosImportancia( 0.3 )
 
 
 #Ahora construyo patrones elaborados  https://www.youtube.com/watch?v=aLj8WCO-2QI
