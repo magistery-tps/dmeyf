@@ -60,6 +60,23 @@ output_file_path <- function(path, date_range, groups) {
     sep=''
   )
 }
+
+plot_bajas <- function(datasset) {
+  service_down_by_month <- dataset %>%
+    drop_na() %>% 
+    filter(clase_ternaria != "") %>% 
+    group_by(foto_mes, clase_ternaria) %>% 
+    arrange(foto_mes) %>%
+    tally() %>% 
+    mutate(foto_mes = as.character(foto_mes))
+  
+  ggplot(service_down_by_month, aes(x=foto_mes, y=n, group=clase_ternaria)) +
+    geom_line(aes(color=clase_ternaria)) +
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
+    ggtitle("Baja de clientes al mes 1, 2.") +
+    labs(y="Clientes", x = "Mes") +
+    geom_point()
+}
 # ------------------------------------------------------------------------------------------------------------
 #
 #
@@ -82,3 +99,5 @@ for(date_range in date_ranges) {
     output_file_path(DATASET_PATH, date_range, groups)
   )
 }
+
+plot_bajas(dataaser)
