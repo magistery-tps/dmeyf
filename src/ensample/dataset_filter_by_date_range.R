@@ -17,10 +17,15 @@ DATASET_PATH  <- '../../dataset/'
 INPUT_PATH   <- paste(DATASET_PATH, 'paquete_premium.csv', sep='')
 # Daaset content from 201801 to 202101,
 date_ranges  <- list(
-  list(from='202011', to='202101'),
+  list(from='202101', to='202101'),
+  list(from='202012', to='202012'),
   list(from='202011', to='202011'),
   list(from='202010', to='202010'),
-  list(from='202009', to='202009')
+  list(from='202009', to='202009'),
+  list(from='202008', to='202008'),
+  list(from='202007', to='202007'),
+  list(from='202006', to='202006'),
+  list(from='202005', to='202005')
 )
 # ------------------------------------------------------------------------------------------------------------
 #
