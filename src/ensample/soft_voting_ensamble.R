@@ -27,7 +27,7 @@ ENSAMPLE_PATH  <- '../../ensamples/soft_voting/'
 
 # Secuencia de probabilidades de corte a probar.
 #                     (From,  To, Step)
-CUTEOFF_PROBS  <- seq(0.0161, 1,  0.00000001)
+CUTEOFF_PROBS  <- seq(0.02035, 1,  0.0000001)
 #CUTEOFF_PROBS <- seq(0.01671, 0.1,  0.00000001) # median
 # CUTEOFF_PROBS  <- seq(0.01705, 1,  0.00000001) # mean
 
