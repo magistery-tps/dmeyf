@@ -61,10 +61,17 @@ output_file_path <- function(path, date_range, groups) {
   )
 }
 
-plot_bajas <- function(datasset) {
+plot_monthly_downs <- function(datasset, continua=TRUE) {
   service_down_by_month <- dataset %>%
-    drop_na() %>% 
-    filter(clase_ternaria != "") %>% 
+    mutate(clase_ternaria = ifelse(clase_ternaria == "", "NO_CARGADO", clase_ternaria))
+   
+  if(continua == FALSE) {
+    service_down_by_month <- service_down_by_month %>%
+      filter(clase_ternaria != "CONTINUA") %>% 
+      filter(clase_ternaria != "NO_CARGADO")
+  }
+  
+  service_down_by_month <- service_down_by_month %>%
     group_by(foto_mes, clase_ternaria) %>% 
     arrange(foto_mes) %>%
     tally() %>% 
@@ -73,10 +80,30 @@ plot_bajas <- function(datasset) {
   ggplot(service_down_by_month, aes(x=foto_mes, y=n, group=clase_ternaria)) +
     geom_line(aes(color=clase_ternaria)) +
     theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
-    ggtitle("Baja de clientes al mes 1, 2.") +
-    labs(y="Clientes", x = "Mes") +
-    geom_point()
+    ggtitle("Bajas mensuales") +
+    labs(y="Clientes", x = "Mes")
 }
+
+generate_monthly_datasets <- function(dataset, date_ranges) {
+  print('Generate monthly datasets...')
+  for(date_range in date_ranges) {
+    print(paste('from:', date_range$from, 'to:', date_range$to))
+    
+    dataset_part <- search_by_date_range(dataset, from = date_range$from, to = date_range$to)
+    groups      <- dataset_part %>% group_by(Predicted) %>% tally()
+    
+    write_csv(
+      dataset_part, 
+      output_file_path(DATASET_PATH, date_range, groups)
+    )
+  }
+}
+
+load_dataset <- function() {
+  print(paste('Load', INPUT_PATH, 'dataset...'))
+  read.csv(INPUT_PATH)
+}
+
 # ------------------------------------------------------------------------------------------------------------
 #
 #
@@ -84,20 +111,9 @@ plot_bajas <- function(datasset) {
 # ------------------------------------------------------------------------------------------------------------
 # Main
 # ------------------------------------------------------------------------------------------------------------
-print(paste('Load', INPUT_PATH, 'dataset...'))
-dataset <- read.csv(INPUT_PATH)
+dataset <- load_dataset()
 
-print('Generate dataset subsets...')
-for(date_range in date_ranges) {
-  print(paste('from:', date_range$from, 'to:', date_range$to))
+generate_monthly_datasets(dataset, date_ranges)
 
-  dataset_part <- search_by_date_range(dataset, from = date_range$from, to = date_range$to)
-  groups      <- dataset_part %>% group_by(Predicted) %>% tally()
-  
-  write_csv(
-    dataset_part, 
-    output_file_path(DATASET_PATH, date_range, groups)
-  )
-}
-
-plot_bajas(dataaser)
+plot_monthly_downs(dataset, continua=TRUE)
+plot_monthly_downs(dataset, continua=FALSE)
