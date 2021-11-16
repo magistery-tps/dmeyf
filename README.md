@@ -4,6 +4,7 @@
 ## TP 2
 
 [dmeyf2021segunda](https://www.kaggle.com/c/dmeyf2021segunda/leaderboard)
+[]
 
 ## Actualizar Fork
 
@@ -36,3 +37,12 @@ $ git checkout master
 ```bash
 $ git rebase upstream/master
 ```
+
+## Descargar dataset
+
+```bash
+$ git clone https://github.com/magistery-tps/dmeyf.git 
+```
+
+
+
