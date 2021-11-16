@@ -4,7 +4,7 @@
 ## TP 2
 
 * [Competencia](https://www.kaggle.com/c/dmeyf2021segunda/leaderboard)
-* [Resumne basic google cloud](https://github.com/magistery-tps/dmeyf/blob/master/docs/Resumen%20Google%20Cloud.pdf)
+* [Resimen Google Cloud](https://github.com/magistery-tps/dmeyf/blob/master/docs/Resumen%20Google%20Cloud.pdf)
 
 ## Actualizar Fork
 
