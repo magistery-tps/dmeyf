@@ -41,7 +41,7 @@ $ git rebase upstream/master
 ## Descargar dataset
 
 ```bash
-$ git clone https://github.com/magistery-tps/dmeyf.git 
+$ wget https://storage.googleapis.com/dmeyf/datasetsOri/paquete_premium.csv.gz
 ```
 
 
