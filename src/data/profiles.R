@@ -23,8 +23,11 @@ INPUT_PATH  <- paste(DATASET_PATH, INPUT_FILE, '.csv', sep='')
 DATA_PATH         <- '../../data/'
 IMPORTANCE_PATH  <- paste(DATA_PATH, INPUT_FILE, '.csv', sep='')
 
-PROFILE_PATH      <- paste(DATA_PATH, 'profiles.csv', sep='')
-PROFILE_IMG_PATH  <- paste(DATA_PATH, 'profiles.png', sep='')
+
+K                 <- 2
+PROFILE_NAME      <- paste('discharges-profiles-k_', K, sep='')     
+PROFILE_PATH      <- paste(DATA_PATH, PROFILE_NAME, '.csv', sep='')
+PROFILE_IMG_PATH  <- paste(DATA_PATH, PROFILE_NAME, '.png', sep='')
 
 exclude <- c('clase_ternaria', 'target', 'foto_mes', 'X')
 # ------------------------------------------------------------------------------------------------------------
@@ -119,7 +122,7 @@ plot(
 lines(1:10, silhouette)
 
 
-pam_result = pam(gower_df, diss = TRUE, k = 2)
+pam_result = pam(gower_df, diss = TRUE, k = K)
 
 profiles <- ds[pam_result$medoids, ]
 write_csv(profiles, PROFILE_PATH)
