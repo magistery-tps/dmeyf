@@ -57,7 +57,7 @@ save_output <- function(output, cutoff_prob) {
   groups <- output %>% group_by(Predicted) %>% count()
   positives <- groups %>% filter(Predicted == 1) %>% pull(n)
   negatives <- groups %>% filter(Predicted == 0) %>% pull(n)
-
+  
   OUTPUT_FILE_PATH <- paste(
     ENSAMPLE_PATH, 
     str_datetime(),
@@ -156,7 +156,7 @@ for(cutoff_prob in CUTEOFF_PROBS) {
     print(paste('Score does not improve after ', patiences_step, ' steps!', sep=''))
     break
   }
-
+  
   # Definimos la lcases segun la probabilidad de corte.
   probs_classes <- soft_voting_startegy(filtered_probs_grouped_by_id, cutoff_prob)
   
@@ -167,7 +167,7 @@ for(cutoff_prob in CUTEOFF_PROBS) {
     print(paste(cutoff_prob, ' cuteoff_prob does not have positives.', sep=''))
     next
   }
-
+  
   # Calculamos el score
   score <- fbeta(
     truth    = classes(test_subset), 
@@ -175,7 +175,7 @@ for(cutoff_prob in CUTEOFF_PROBS) {
     positive = '1',
     beta     = F_BETA_SCORE
   )
-
+  
   # Si el score nos da NA skipeamos el paso.  
   if(is.na(score)) {
     patiences_step <- patiences_step + 1
@@ -184,7 +184,7 @@ for(cutoff_prob in CUTEOFF_PROBS) {
     }
     break
   }
-
+  
   if(score > best_score) {
     patiences_step   <- 0
     best_score       <- score
@@ -204,8 +204,7 @@ if(best_score > 0) {
   best_score_result <- soft_voting_startegy(probs_grouped_by_id, best_cutoff_prob)
   positives         <- pos_count(best_score_result)
   negatives         <- neg_count(best_score_result)
-
+  
   show_info(best_cutoff_prob, best_score, positives, negatives, 'BEST >==> ')
   save_output(best_score_result, best_cutoff_prob)
 }
-
