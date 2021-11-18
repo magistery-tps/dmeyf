@@ -59,6 +59,7 @@ palancas$ratiomean6  <- FALSE   #Un derivado de la idea de Daiana Sparta
 
 palancas$tendencia6  <- FALSE    #Great power comes with great responsability
 
+palancas$antonio  <- FALSE   # el valor de la variable sobre el promedio de ese mes
 
 palancas$canaritosimportancia  <- FALSE  #si me quedo solo con lo mas importante de canaritosimportancia
 
@@ -499,6 +500,22 @@ Tendencia  <- function( dataset, cols )
 
 }
 #------------------------------------------------------------------------------
+#Esta palanca fue solicitada por  Antonio Velazquez Bustamente
+#agregar una palanca al script 951 que genere el valor de la variable/(el promedio de la misma de todos los clientes para el mes en cuestión)
+
+Antonio  <- function( cols )
+{
+
+  sufijo  <- paste0( "_tony")
+
+  dataset[ , paste0( cols, sufijo) := lapply( .SD,  function(x){ x/mean(x, na.rm=TRUE)} ), 
+             by= foto_mes, 
+             .SDcols= cols]
+
+  ReportarCampos( dataset )
+}
+#------------------------------------------------------------------------------
+
 VPOS_CORTE  <- c()
 
 fganancia_lgbm_meseta  <- function(probs, datos) 
@@ -635,6 +652,7 @@ correr_todo  <- function( palancas )
 
   if( palancas$tendencia6 )  Tendencia( dataset, cols_analiticas)
 
+  if( palancas$antonio )  Antonio(cols_analiticas)
 
   if( palancas$canaritosimportancia )  CanaritosImportancia( dataset )
 
