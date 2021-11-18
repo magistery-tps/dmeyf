@@ -85,7 +85,7 @@ plot_monthly_downs <- function(datasset, continua=TRUE) {
 }
 
 generate_monthly_datasets <- function(dataset, date_ranges) {
-  print('Generate monthly datasets...')
+  print('Generate monthly datasets...') 
   for(date_range in date_ranges) {
     print(paste('from:', date_range$from, 'to:', date_range$to))
     
