@@ -13,8 +13,8 @@ p_load(this.path, purrr, tidyverse)
 # ------------------------------------------------------------------------------------------------------------
 # Global variables
 # ------------------------------------------------------------------------------------------------------------
-CONFIG_TYPES     <- c('unweighted') # default') #, 'overfitted', 'adjusted')
-INPUT_PATH       <- '../../mesetas/'
+CONFIG_TYPES     <- c('greater_than_6.3') #('unweighted') # default') #, 'overfitted', 'adjusted')
+INPUT_PATH       <- '../../final/'
 ENSAMPLE_PATH    <- '../../ensamples/hard_voting/'
 # ------------------------------------------------------------------------------------------------------------
 #
