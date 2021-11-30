@@ -17,17 +17,18 @@ setwd(this.path::this.dir())
 DATASET_PATH  <- '../../dataset/'
 
 # INPUT_FILE  <- 'dataset_discharge_yes_no'
-INPUT_FILE  <- 'discharges_baja_'
+INPUT_FILE  <- 'discharges'
 INPUT_PATH  <- paste(DATASET_PATH, INPUT_FILE, '.csv', sep='')
 
 DATA_PATH         <- '../../data/'
 IMPORTANCE_PATH  <- paste(DATA_PATH, INPUT_FILE, '.csv', sep='')
 
-DISCHARGE_TYPE    <- 'baja_1'
-K                 <- 2
+K                 <- 4
+DISCHARGE_TYPE    <- "BAJA+1"
 PROFILE_NAME      <- paste('discharge-profiles-', DISCHARGE_TYPE, '-k_', K, sep='')     
 PROFILE_PATH      <- paste(DATA_PATH, PROFILE_NAME, '.csv', sep='')
 PROFILE_IMG_PATH  <- paste(DATA_PATH, PROFILE_NAME, '.png', sep='')
+SILHOUETTE_PATH  <- paste(DATA_PATH, PROFILE_NAME, '-silhouette.png', sep='')
 
 exclude <- c('clase_ternaria', 'target', 'foto_mes', 'X')
 # ------------------------------------------------------------------------------------------------------------
@@ -67,7 +68,9 @@ plot_clusters <- function(gower_df, classes) {
 # Main
 # ------------------------------------------------------------------------------------------------------------
 # https://towardsdatascience.com/clustering-datasets-having-both-numerical-and-categorical-variables-ed91cdca0677
-dataset <- load_file(INPUT_PATH)
+dataset <- load_file(INPUT_PATH) %>% 
+  filter(clase_ternaria == DISCHARGE_TYPE)
+
 print('Dataset loaded...')
 
 nrow(dataset)
@@ -113,6 +116,7 @@ for(i in 2:10) {
   silhouette <- c(silhouette ,pam_clusters$silinfo$avg.width)
 }
 
+png(SILHOUETTE_PATH, width = 1000, height = 1000, pointsize = 30)
 plot(
   1:10, 
   silhouette,
@@ -120,7 +124,7 @@ plot(
   ylab = "Silhouette Width"
 )
 lines(1:10, silhouette)
-
+dev.off()
 
 pam_result = pam(gower_df, diss = TRUE, k = K)
 
@@ -132,3 +136,4 @@ print('Plot clusters...')
 png(PROFILE_IMG_PATH, width = 1000, height = 1000, pointsize = 30)
 plot_clusters(gower_df, pam_result$clustering)
 dev.off()
+

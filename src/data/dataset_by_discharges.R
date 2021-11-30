@@ -26,9 +26,9 @@ OUTPUT_PATH  <- paste(DATASET_PATH, 'discharges.csv', sep='')
 # ------------------------------------------------------------------------------------------------------------
 write_csv <- function(df, path) write.csv(df, path, row.names = TRUE, quote=FALSE)
 
-filter_discharges <- function(datasset) {
+filter_discharges <- function(dataset, clases = c("CONTINUA")) {
   dataset %>%
-    filter(clase_ternaria != "CONTINUA") %>% 
+    filter(clase_ternaria %in% clases) %>% 
     filter(clase_ternaria != "")
 }
 
