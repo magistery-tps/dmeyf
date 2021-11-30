@@ -1,5 +1,9 @@
 #  UBA - Maestria en Explotación de Datos y Descubrimiento de Conocimiento - Datamining en Economia y Finanzas - Churn Prediction
 
+## Videos
+
+* [Tecnico](https://www.youtube.com/watch?v=5d7CtKEJC1U)
+
 
 ## TP 2
 
