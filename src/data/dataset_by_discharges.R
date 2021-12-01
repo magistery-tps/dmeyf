@@ -16,7 +16,7 @@ p_load_gh('adrianmarino/commons')
 # ------------------------------------------------------------------------------------------------------------
 DATASET_PATH <- '../../dataset/'
 INPUT_PATH   <- paste(DATASET_PATH, 'paquete_premium.csv', sep='')
-OUTPUT_PATH  <- paste(DATASET_PATH, 'discharges.csv', sep='')
+OUTPUT_PATH  <- paste(DATASET_PATH, 'discharges-baja_1.csv', sep='')
 # ------------------------------------------------------------------------------------------------------------
 #
 #
@@ -26,7 +26,7 @@ OUTPUT_PATH  <- paste(DATASET_PATH, 'discharges.csv', sep='')
 # ------------------------------------------------------------------------------------------------------------
 write_csv <- function(df, path) write.csv(df, path, row.names = TRUE, quote=FALSE)
 
-filter_discharges <- function(dataset, clases = c("CONTINUA")) {
+filter_discharges <- function(dataset, clases = c("BAJA+1")) {
   dataset %>%
     filter(clase_ternaria %in% clases) %>% 
     filter(clase_ternaria != "")
