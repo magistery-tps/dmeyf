@@ -1,12 +1,10 @@
-#  UBA - Maestria en Explotación de Datos y Descubrimiento de Conocimiento - Datamining en Economia y Finanzas - Churn Prediction
+<p align="left">
+<b>University of Buenos Aires (UBA)</br>Master in Data Mining and Knowledge Discovery<br/>Datamining en Economia y Finanzas</b>
+</p>
 
-## Videos
+#  Trabajo Practico 2: Churn Prediction
 
 * [Tecnico](https://www.youtube.com/watch?v=5d7CtKEJC1U)
-
-
-## TP 2
-
 * [Competencia](https://www.kaggle.com/c/dmeyf2021segunda/leaderboard)
 * [Resumen Google Cloud](https://github.com/magistery-tps/dmeyf/blob/master/docs/Resumen%20Google%20Cloud.pdf)
 
